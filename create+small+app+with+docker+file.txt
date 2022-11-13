@@ -1,0 +1,21 @@
+video reference- https://www.youtube.com/watch?v=UXAoZg1W3Q4
+
+first create docker file
+------------------------
+create directory mkdir project
+cd project
+wget https://www.free-css.com/assets/files/free-css-templates/download/page283/ninom.zip
+uzip file
+cp -rf filename .
+nano dockerfile
+
+FROM httpd
+COPY . /usr/local/apache2/htdocs
+
+create docker image by using below command
+------------------------------------------
+docker build -t webiste .
+
+run dokcer file by using docker command
+---------------------------------------
+docker run website -p 80:80 website/imagename

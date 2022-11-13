@@ -1,0 +1,25 @@
+docker connect from different host
+-----------------------------------
+refer link - https://medium.com/@ssmak/how-to-enable-docker-remote-api-on-docker-host-7b73bd3278c6
+
+Navigate to /lib/systemd/system in your terminal and open docker.service file
+vi /lib/systemd/system/docker.service
+
+Find the line which starts with ExecStart and adds -H=tcp://0.0.0.0:2375 to make it look like
+ExecStart=/usr/bin/dockerd -H=fd:// -H=tcp://0.0.0.0:2375
+
+Save the Modified File
+
+Reload the docker daemon
+systemctl daemon-reload
+Restart the container
+sudo service docker restart
+
+test from remote serever
+
+docker -H=tcp://public/private-ip images
+ -example: docker -H=tcp://54.78.56.43:2375 images
+
+            or 
+
+docker -H=54.78.56.43:2375 images

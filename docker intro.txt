@@ -1,0 +1,24 @@
+docker file > docker image > docker container
+
+-----------------------------------------------------------
+docker ps -a to check o we have  any container or not
+---------------------------------------
+FROM - TO PULL THE BASE IMAGE
+RUN - TO EXECUET COMMANDS
+CMD - TO PROVIDE DEFAULTS AND EXECUTING CONTAINER
+EBTRYPOINT - IT IS NOT REPLACABLE
+WORKDIR - TO SET WORK DIR
+COPY - COPY FROM LOCAL TO DOCKER
+ADD - COPY FILES FORM LOCAL TO DOCKER
+EXPOSE - EXPOSE PORT
+ENV - TO SETUP ENVIRONMENT VARIABILE
+
+-------------------------------------
+build docker image from docker file
+
+docker build -t mytomcat .
+
+##################################################################################################################
+install docker
+--------------
+yum install docker -y

@@ -1,0 +1,9 @@
+docker pull bitnami/tomcat:
+---------------------------
+docker run -p 80:8080 -e TOMCAT_ALLOW_REMOTE_MANAGEMENT=yes -e TOMCAT_USERNAME=admin -e TOMCAT_PASSWORD=admin -d bitnami/tomcat
+
+
+docer file to create automatic deployment in docker container:
+-------------------------------------------------------------
+FROM bitnami/tomcat
+COPY *.war /bitnami/tomcat/webapps

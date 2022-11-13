@@ -1,0 +1,63 @@
+refer video- https://www.youtube.com/watch?v=P3imFC7GSr0
+refer git hub- https://github.com/christianlempa/videos/tree/main/nginxproxymanager-tutorial
+
+install docker:
+yum install docker
+
+install dockercompose:
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+sudo chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+
+
+install proxy manager through container
+---------------------------------------
+version: '3'
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    environment:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+----------------------------------------------------
+after get public ip and run in browser
+80 - for default website
+81 - for proxymanager ui
+443 - https connection
+
+default username and password:-
+-------------------------------
+admin@example.com
+changeme
+
+create domain name for nginx, get pub ip and domain an dgoto route53 add domain
+now when you searching domain name you will be goto the default page of nginx proxy manager
+
+to run proxymanager:
+check docker network list:
+
+docker network list
+docker run -d --network networkname --name=any_custom_name -d application_name_you_wan_to_install_indocker
+
+example:
+docker run -d --network ec2-user_default --name=nextcloud -d nextcloud

@@ -1,0 +1,482 @@
+install docker
+--------------
+yum install docker -y
+
+docker run first project
+------------------------
+first install docker 
+then execute:- docker run docker/whalesay cowsay hello-world
+-----------------------------------------------------------
+docker run nginx - it will run nginx container on docker
+docker ps - it will fetch all basic info about a container
+docker ps -a - all container which previously stopped also
+
+docker stop "name/container id"
+docker rm "name/container id"
+
+docker images - it will print all images 
+docker rmi containerid
+
+docker run ubuntu sleep 5
+dockef exec "name" cat /etc/hosts
+
+create centos image - docker run -it centos bash
+                      docker run -it centos
+
+if you want to run container in background for 20 second
+---------------------------------------------------------
+docker run -d centos sleep 5
+docker stop name/container id
+
+remove all container at a time 
+-----------------------------
+docker rm "3 digit id" "3 digit id" "3 digit id" "3 digit id"
+
+for deleting image, ifrst we have to delete all container
+deleet image > delete conatiner
+
+if we want pull image, no need to run container right now, then execute
+-----------------------------------------------------------------------
+docker pull image(ubunutu)
+
+if you want to run some commands wihtout get in to conatainer
+------------------------------------------------------------
+first run container
+> docker pull ubuntu
+> docker run -d ubuntu sleep 500
+> docker exec container-id cat /etc/os-relese
+
+to get into running conatainer
+------------------------------
+docker exec -it conatiner-id bash
+
+create custom name for container
+-----------------------------------
+docker run -d --name custom-name  imagename sleep 500 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+download with tag
+------------------
+docker pull redis
+dokcer pull redis:4.0
+by default it will take latest one, if you want to take old one we should use tag() 
+
+how to give port number
+-----------------------
+dokcer pull nginx
+dokcer run -p 80:5000 nginx
+
+to remove data lose we can assign internal directory
+-----------------------------------------------------
+docker run -v /opt/datadir:/var/lib/mysql mysql
+
+to inspect about a container
+----------------------------
+docker inspect container-name
+
+to get logs of docker container
+-------------------------------
+docker logs containe-name 
+
+download ubuntu laster version by using tag
+-------------------------------------------
+docker run  ubuntu cat /etc/os-release
+
+download specific verion app
+----------------------------
+docker pull appname:tag
+
+goto bash when container up
+---------------------------
+docker run -it ubuntu bash
+
+how to assign a port number 
+--------------------------
+docker run -p 8080:8080 nginx
+
+how to map port number and volume
+---------------------------------
+create  a directory -> mkdir /jenkinsdata
+docker run -p 8080:8080  -v /jenkinsdata:/var/jenkins_home jenkins
+
+create php my admin with database server
+-----------------------------------------
+create mariadb server and create user on it
+
+create php my admin container
+- first download image
+docker pull phpmyadmin
+
+- run simple image
+docker run -p 8080:80 phpmyadmin
+
+- run image with arbitury server(if you have any server outside container)
+docker run --name phpmyadmin -d -e PMA_ARBITRARY=1 -p 8080:80 phpmyadmin
+
+create jenkins server
+---------------------
+docker pull jenkins/jenkins
+
+docker run -d -p 80:8080 jenkins/jenkins
+dpage/pgadmin4
+- to get initial admin password use:-
+docker logs "container name"
+
+create postegre admin
+---------------------
+docker pull pgadmin
+
+run image: (we can use both commands)
+docker run -d -p 9999:80 --name postgre8 -e PGADMIN_DEFAULT_EMAIL="ashiq@gmail.com" -e PGADMIN_DEFAULT_PASSWORD="ashiq" dpage/pgadmin4
+docker run -d -p 8080:80 --name postgre -e PGADMIN_DEFAULT_EMAIL="ashiq@gmail.com" -e PGADMIN_DEFAULT_PASSWORD="password" dpage/pgadmin4
+
+---------------------------------------------------------------------------------------------------------------------
+Docker Images
+-------------
+creating new docker image
+-------------------------
+create flask app with docker UBUNTU
+------------------------------------
+docker file containe "instructions" and "argument"
+for example:
+
+FROM ubuntu
+
+RUN apt-get update
+RUN apt-get install python
+
+RUN pip install flask
+RUN pip install flask-mysql
+
+COPY . /opt/sourcecode
+
+ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+
+--------------------------------------------------------
+create flask app with docker AmazonLinux
+------------------------------------
+before we should create directory, and download python program code to that directory
+git hub link:
+https://github.com/mmumshad/simple-webapp-flask
+
+FROM amazonlinux
+RUN yum install python -y
+RUN yum install python-pip -y
+RUN pip install flask 
+COPY . /opt/
+ENTRYPOINT FLASK_APP=/opt/app.py flask run --host=0.0.0.0 --port=8080
+
+--------------------------------------------------------
+create nginx docker app by usign docker file:-
+-----------------------------------------------------
+demo creatign docker image:-
+first create dockerfile:-
+
+FROM ubuntu
+COPY . /usr/share/nginx/html
+
+after run this command create docker image:-
+docker build -t image_name path
+
+
+docker push to docker registry:-
+---------------------------------
+first login to docker:-
+docker login
+enter username(ashiqummathoor)
+eneter password(docker@0786)
+
+docker commit container_id username/imagename
+
+it will create new image in docker
+
+push this image docker container:-
+docker push username/imagename
+
+how to reduce docker file:
+--------------------------
+we can create alpine version it will automatically reduce the space, moslty all alpine versions are very small size.
+
+first create nginx image:
+demo creatign docker image:-
+first create dockerfile:-
+
+FROM nginx
+COPY . /usr/share/nginx/html
+
+after run this command create docker image:-
+docker build -t image_name path
+
+lets say, we have image with size 100 mb, and ima gtoing to reduce the sixe from 100 bm to 50 or less, to do that we should
+use alpine image.
+
+create sam file again withminimal mofdification, chnange docker base image from nginx to nginx:alpine
+
+demo creatign docker image:-
+first create dockerfile:-
+
+FROM nginx:alpine
+COPY . /usr/share/nginx/html
+
+after run this command create docker image:-
+docker build -t image_name path
+
+after build this docker file:
+docker buil -t image_name
+
+check wheteher size is reduced or not:
+docker images
+it will show image size overthere
+
+delete all docker images and containers
+---------------------------------------
+stop all conatiner:
+docker stop $(docker ps -aq)
+
+remove all container:
+docker rm $(docker ps -aq)
+
+remove all docker iamges:
+docker rmi $(docker images -aq)
+
+>>>>environmrnt variable<<<<<
+-----------------------------
+
+how to get env of conatiner:-
+docker inspect imagename/container_id
+
+>>>>>>>>>>>>>>>>>>>>command vs entrypoint:<<<<<<<<<<<<<<<<<<<<<<<<
+---------------------------------------------------------------------
+how to set CMD in docker file
+for example we have image nginx, while we running nginx image it should run only for 20 second, for that we should
+create dokcer file bemethe we should mention "CMD sleep 20"
+
+FROM nginx
+COPY . /usr/share/nginx/html
+CMD sleep 20
+
+----------------------
+same as when we do "docker run nginx 10 it should work for 10 seconds, that we should set ENTRYPOINT"
+
+FROM nginx
+COPY . /usr/share/nginx/html
+CMD ["sleep"]
+
+after create docker image:
+docker build -t nginx .
+
+after run this image:
+docker run nginx 20
+
+it will run for 20 seconds, we no need to mention overthere
+
+------------------------------------
+
+if yoy want to set any custom value overtehere use again use "CMD" command
+
+FROM nginx
+COPY . /usr/share/nginx/html
+ENTRYPOINT ["sleep"]
+CMD ["10"]
+
+when we executing "docker run nginx" it is groing to run for 10 seonds automatically, althogh not specifying sleep
+paramater.
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+dcoker compose:-
+----------------
+docker sample voting application:
+-----------------------------------
+git hub usrl: - https://github.com/dockersamples/example-voting-app
+
+to get into running conatainer
+------------------------------
+docker exec -it conatiner-id bash
+
+to access postgre database
+---------------------------
+psql -U user -d ashiq
+
+var conString = "postgres://YourUserName:YourPassword@localhost:5432/YourDatabase";
+
+docker host ip address - 172.17.0.1
+system local host - 127.0.0.1
+
+
+install jenkins with maven(100%Working)
+---------------------------------------
+FROM jenkins/jenkins:lts
+# if we want to install via apt
+USER root
+RUN apt-get update && apt-get install -y maven
+# drop back to the regular jenkins user - good practice
+USER jenkins
+
+after create image:
+docker build -t jenkins .
+
+Docker-engin:
+-------------
+when we install docker we will get 3 components:
+-docker cli
+-docker restAPI
+-DCOKER DEMON
+
+docker demon
+------------
+it is manages docker components, it working on background, it make ensre all the component its workign properly on background
+
+docker restAPI
+--------------
+which used to communicate programs with demons, or application can communicate with docker components or demon
+
+docker cli
+----------
+it is user interface,where user can interact with docker and manage container images by usign specific commands.
+
+docker connect from different host
+-----------------------------------
+refer link - https://medium.com/@ssmak/how-to-enable-docker-remote-api-on-docker-host-7b73bd3278c6
+
+Navigate to /lib/systemd/system in your terminal and open docker.service file
+vi /lib/systemd/system/docker.service
+
+Find the line which starts with ExecStart and adds -H=tcp://0.0.0.0:2375 to make it look like
+ExecStart=/usr/bin/dockerd -H=fd:// -H=tcp://0.0.0.0:2375
+
+Save the Modified File
+
+Reload the docker daemon
+systemctl daemon-reload
+Restart the container
+sudo service docker restart
+
+test from remote serever
+
+docker -H=tcp://public/private-ip images
+ -example: docker -H=tcp://54.78.56.43:2375 images
+
+            or 
+
+docker -H=54.78.56.43:2375 images
+
+
+restrict cpu and memory usage
+-----------------------------
+limit cpu or memory usage:
+
+docker run --cpus=0.3 --memory=100m nginx
+
+--cpus=0.3 -it denotes it will take 30% cpu maximum
+--memory=100m - it will will take maximum 100mb
+
+
+docker volume, image store, conatner info
+------------------------------------------
+cd /var/lib/docker
+which conatn many folders like, containers, images, volumes
+
+without stoping container how to exit
+-------------------------------------
+docke run -it nginx bash
+it will goto bash terminal and when we exit from the container it will temrinate the session
+instead terminate or exit we can use ctl+p+q it will not terminate conatiner
+
+
+to create new volume
+-------------------
+docker volume create data_volume
+
+docker run -v data_volume:/var/lib/mysql mysql
+
+docker volume ls - to list all docker volumes
+
+docker vloume inspect volum_name
+
+docker volume rm volume_name
+
+docker volume prune - remove unwanted docker volumes	
+
+>>>
+persistent volume with docker
+-----------------------------
+first create docker:-
+docker run -d -v jenkins:/var/jenkins_home jenkins/jenkins
+
+-v jenkins - it will create a jenkins folder/volume in vm
+-v        :/var/jenkins_home it is going to map 'jenkins' from vm to /var/jenkins_home  
+
+after whatever jenkins dokcer we creating fo that we can map with jenkins: directory it will persist the volume contents
+>>>>
+
+new way to add persistent volume
+--------------------------------
+docker run -d -v --mount type=bind, source=data,mysql target=/var/lib/mysql mysql 
+
+how to modify/edit running container
+-------------------------------------
+for example lets take nginx here as exmaple
+in case of nginx which storing content on /usr/share/nginx/html/index.html
+
+so copy that file to local system and edit and again copy to nginx conatiner
+
+command:
+docker cp conatiner-id:/usr/share/nginx/html/index.html ./
+
+after we can edit this file
+
+docker cp ./index.html conatiner-id:/usr/share/nginx/html
+ 
+------------------------------------------------------------------
+
+type of drivers in docker
+--------------------------
+it will select drive automatically based up on server operating system
+-aufs - if os is ubuntu it will select aufs
+-zfs
+-btrfs
+-device mapper
+-overlay
+-overlay2
+
+if we not specifying any docker volume it will create numerical value as container name, so we can identify conatiner volume
+by using conatiner id.
+
+-------------------------------------------------
+docker networking
+------------------
+3 type of networing
+-bridge - it will allocate a default network for all container in a environment
+eg:
+docker run ubuntu
+
+-none - no network, i will consider as isolated resource
+eg:
+docker run ubuntu --network=none
+
+-host - if we use host network it will allocate same port for host inside and outside, we no need to mention specifically.
+eg:
+dokcer run ubuntu --network=host
+
+to list all network
+--------------------
+docker network ls 
+
+to find container network type
+-------------------------------
+docker inspect network
+
+afetr goto under networking tab, there we can find type of network
+
+check puticlar network type:
+----------------------------
+docker network inspect bridge/host
+
+how to create network in docker:
+--------------------------------
+docker network create --driver bridge --subnet 182.18.0.0/24 --gateway 182.18.0.1 wp-mysql-network
+
+how to add container in newly created network:
+-----------------------------------------------
+docker run -d --name newconatiner -e MYSQL_ROOT_PASSWORD=ashiq --network network-name mysql 

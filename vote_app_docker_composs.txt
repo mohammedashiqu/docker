@@ -1,0 +1,143 @@
+git hub url: https://github.com/dockersamples/example-voting-app.git
+
+
+docker comppose simple version for voting app
+---------------------------------------------
+just create docker compose file same as below, images alredy created by ashiq in docker registry
+version: '3'
+services:
+  redis:
+    image: redis
+
+  voting-app:
+    image: ashiqummathoor/vote
+    ports:
+      - 5000:80
+
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  work-app:
+    image: ashiqummathoor/worker
+
+
+
+  result-app:
+    image: ashiqummathoor/result
+    ports:
+      - 5001:80
+
+
+
+
+------------------------------------------------------------------------------------------------
+pull redis image
+
+pull postgre image
+  add username - postgre
+  add password - postgre
+  add hostname - db/postgre
+
+create vote-app image
+  connect with redis
+
+create worker-app image
+ - connect with redis
+   connect with db
+  add username - postgre
+  add password - postgre
+  add hostname - db/postgres
+
+create result-app
+ connect with postgres
+   add username - postgre
+   add password - postgre
+   add hostname - db/postgres
+
+docker-compose.yml(version-3)
+------------------------------
+version: '3'
+services:
+  redis:
+    image: redis
+
+  voting-app: 
+    image: voting-app
+    ports:
+      - 5000:80
+
+  
+  postgres:
+    image: postgres 
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  work-app:
+    image: work-app
+
+ 
+
+  result-app:
+    image: result-app
+
+    ports:
+      - 5001:80
+
+
+docker-compse.yml file(version-1)
+---------------------------------
+version: '3'
+services:
+  redis:
+    image: redis
+    volumes:
+      - redis:/var/redis
+
+  voting-app: 
+    image: voting-app
+    ports:
+      - 5000:80
+    links:
+      - redis
+    volumes:
+      - voting-app:/var/vote-app
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres:/var/postgres      
+
+
+  work-app:
+    image: work-app
+    links:
+      - redis
+      - postgres
+    volumes:
+      - work-app:/var/work-app
+
+  result-app:
+    image: result-app
+    links: 
+      - postgres
+    ports:
+      - 5001:80
+    volumes:
+      - result-app:/var/result-app
+
+volumes:
+  voting-app:
+  redis:
+  postgres:
+  result-app:
+  work-app:

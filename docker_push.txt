@@ -1,0 +1,13 @@
+docker push to docker registry:-
+---------------------------------
+first login to docker:-
+docker login
+enter username(ashiqummathoor)
+eneter password(docker@0786)
+
+docker commit container_id username/imagename
+
+it will create new image in docker
+
+push this image docker container:-
+docker push username/imagename
